@@ -1,0 +1,8 @@
+mahout seqdirectory -i Articles_data -o Articles_data_seq
+mahout seq2sparse -i Articles_data_seq -o Articles_data_vectors -lnorm -nv -wt tfidf
+mahout split -i Articles_data_vectors/tfidf-vectors --trainingOutput Articles-train-vectors --testOutput Articles-test-vectors --randomSelectionPct 25 --overwrite --sequenceFiles -xm sequential
+hadoop fs -put projet/ /projet-big-data/
+mahout trainnb -i hdfs://localhost:9000/projet-big-data/projet/Articles-train-vectors -o model hdfs://localhost:9000/projet-big-data/projet/model
+-li hdfs://localhost:9000/projet-big-data/projet/labelindex -ow -c
+mahout testnb -i hdfs://localhost:9000/projet-big-data/projet/Articles-test-vectors -m hdfs://localhost:9000/model -l hdfs://localhost:9000/labelindex
+-ow -o hdfs://localhost:9000/resultats_model
